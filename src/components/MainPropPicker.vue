@@ -5,7 +5,7 @@
         <input
           class="sizes__radio sr-only"
           type="radio"
-          name="sizes-item"
+          :name="item.id"
           :checked="index === 0"
           :value="item.price"
           @change.prevent="updatePrice(item.id, item.price)"
@@ -22,9 +22,9 @@
         <input
           class="colors__radio sr-only"
           type="radio"
-          name="color-item"
-          :value="item.price"
-          v-model="item.price"
+          :name="item.id"
+          :value="index"
+          v-model="pickedColor"
           @change.prevent="updatePrice(item.id, item.price)"
         />
         <span
@@ -44,7 +44,8 @@ export default {
   name: "MainPropPicker",
   data() {
     return {
-      currentPrice: ""
+      currentPrice: "",
+      pickedColor: null
     };
   },
   props: ["products", "priceUpdate", "currentProp", "currentPropId"],
@@ -57,6 +58,9 @@ export default {
   },
   created() {
     this.currentPrice = this.products[0].price;
+  },
+  mounted() {
+    this.pickedColor = 0;
   }
 };
 </script>

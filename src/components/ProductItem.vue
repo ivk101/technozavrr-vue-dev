@@ -17,11 +17,10 @@
         <label class="colors__label">
           <input
             class="colors__radio sr-only"
-            name="color-item"
+            :name="item.id"
             type="radio"
-            :checked="index === 0"
-            :v-model="item.color.id"
-            :value="item.color.id"
+            v-model="pickedColor"
+            :value="index"
           />
           <span class="colors__value" :style="{ 'background-color': item.color.code }"> </span>
         </label>
@@ -44,7 +43,8 @@ import MainPropPicker from "@/components/MainPropPicker.vue";
 export default {
   data() {
     return {
-      currentPrice: null
+      currentPrice: null,
+      pickedColor: null
     };
   },
   filters: {
@@ -57,6 +57,9 @@ export default {
   },
   created() {
     this.currentPrice = this.product.offers[0].price;
+  },
+  mounted() {
+    this.pickedColor = 0;
   }
 };
 </script>
