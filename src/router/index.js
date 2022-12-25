@@ -1,48 +1,48 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import MainPage from "@/pages/MainPage";
-import ProductPage from "@/pages/ProductPage";
-import CartPage from "@/pages/CartPage";
-import OrderPage from "@/pages/OrderPage";
-import OrderInfoPage from "@/pages/OrderInfoPage";
-import NotFoundPage from "@/pages/NotFoundPage";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import MainPage from '@/pages/MainPage';
+import ProductPage from '@/pages/ProductPage';
+import CartPage from '@/pages/CartPage';
+import OrderPage from '@/pages/OrderPage';
+import OrderInfoPage from '@/pages/OrderInfoPage';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    name: "main",
+    name: 'main',
     component: MainPage,
-    path: "/"
+    path: '/',
   },
   {
-    name: "product",
+    name: 'product',
     component: ProductPage,
-    path: "/product/:id"
+    path: '/product/:id',
   },
   {
-    name: "cart",
+    name: 'cart',
     component: CartPage,
-    path: "/cart"
+    path: '/cart',
   },
   {
-    name: "order",
+    name: 'order',
     component: OrderPage,
-    path: "/order"
+    path: '/order',
   },
   {
-    name: "orderInfo",
+    name: 'orderInfo',
     component: OrderInfoPage,
-    path: "/order/:id"
+    path: '/order/:id',
   },
   {
-    name: "notFound",
+    name: 'notFound',
     component: NotFoundPage,
-    path: "*"
-  }
+    path: '*',
+  },
 ];
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

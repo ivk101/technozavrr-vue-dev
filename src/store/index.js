@@ -8,6 +8,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     cartProducts: [],
+    categoriesData: [],
+    colorsData: [],
     userAccessKey: null,
     cartProductsData: [],
 
@@ -37,13 +39,11 @@ export default new Vuex.Store({
       state.cartProductsData = items;
     },
     syncCartProducts(state) {
-      state.cartProducts = state.cartProductsData.map(item => {
-        return {
-          productBasketId: item.id,
-          color: item.color.id,
-          quantity: item.quantity
-        };
-      });
+      state.cartProducts = state.cartProductsData.map(item => ({
+        productBasketId: item.id,
+        color: item.color.id,
+        quantity: item.quantity
+      }));
     },
     resetCart(state) {
       (state.cartProducts = []), (state.cartProductsData = []);
@@ -114,7 +114,7 @@ export default new Vuex.Store({
       context.state.cartLoadingFailed = false;
 
       return axios
-        .get(API_BASE_URL + "/api/baskets", {
+        .get(`${API_BASE_URL}/api/baskets`, {
           params: {
             userAccessKey: context.state.userAccessKey
           }
@@ -137,10 +137,10 @@ export default new Vuex.Store({
     addProductToCart(context, { productId, colorId, amount }) {
       return axios
         .post(
-          API_BASE_URL + "/api/baskets/products",
+          `${API_BASE_URL}/api/baskets/products`,
           {
             productOfferId: productId,
-            colorId: colorId,
+            colorId,
             quantity: amount
           },
           {
@@ -163,10 +163,10 @@ export default new Vuex.Store({
 
       return axios
         .put(
-          API_BASE_URL + "/api/baskets/products",
+          `${API_BASE_URL}/api/baskets/products`,
           {
             basketItemId: productBasketId,
-            quantity: quantity
+            quantity
           },
           {
             params: {
@@ -185,7 +185,7 @@ export default new Vuex.Store({
       context.commit("deleteCartProduct", productBasketId);
 
       return axios
-        .delete(API_BASE_URL + "/api/baskets/products", {
+        .delete(`${API_BASE_URL}/api/baskets/products`, {
           data: {
             basketItemId: productBasketId
           },
@@ -202,7 +202,7 @@ export default new Vuex.Store({
     },
     loadOrderInfo(context, orderId) {
       return axios
-        .get(API_BASE_URL + "/api/orders/" + orderId, {
+        .get(`${API_BASE_URL}/api/orders/${orderId}`, {
           params: {
             userAccessKey: context.state.userAccessKey
           }

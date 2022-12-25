@@ -1,18 +1,16 @@
 <template>
-  <BaseFormField :title="title" :error="error">
-    <input class="form__input" v-model="dataValue" :type="type" :placeholder="placeholder" />
+  <BaseFormField :title="title" :front="front" :error="error">
+    <input class="form__input" v-model="dataValue" type="text" :placeholder="placeholder" />
   </BaseFormField>
 </template>
 
 <script>
 import formFieldMixin from "@/mixins/formFieldMixin";
+import BaseFormField from "@/components/BaseFormField";
 
 export default {
-  props: {
-    type: {
-      default: "text"
-    }
-  },
+  props: ["title", "error", "placeholder", "front"],
+  components: { BaseFormField },
   mixins: [formFieldMixin]
 };
 </script>

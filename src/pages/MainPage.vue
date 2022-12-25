@@ -9,6 +9,17 @@
       </span>
     </div>
 
+    <div class="productsPerPage">
+      <span class="productsPerPage__legend form__legend">Количество товаров на странице</span>
+      <label class="form__label form__label--select">
+        <select v-model="productsPerPage" class="form__select" name="items" type="text">
+          <option value="9">9</option>
+          <option value="18">18</option>
+          <option value="27">27</option>
+        </select>
+      </label>
+    </div>
+
     <div class="content__catalog">
       <ProductFilter
         :price-from.sync="filterPriceFrom"
@@ -34,10 +45,10 @@
 </template>
 
 <script>
-import ProductList from "./../components/ProductList.vue";
-import BasePagination from "./../components/BasePagination.vue";
-import ProductFilter from "./../components/ProductFilter";
 import axios from "axios";
+import ProductList from "../components/ProductList.vue";
+import BasePagination from "../components/BasePagination.vue";
+import ProductFilter from "../components/ProductFilter";
 import { API_BASE_URL } from "../config";
 import endingCountProducts from "@/helpers/endingCountProducts";
 
@@ -54,7 +65,7 @@ export default {
       filterColorId: [],
 
       page: 1,
-      productsPerPage: 3,
+      productsPerPage: 9,
       productsData: null,
 
       productsLoading: false,
@@ -65,19 +76,17 @@ export default {
   computed: {
     products() {
       function filterColors(a, b) {
-        let x = a.reduce((akk, item) => {
+        const x = a.reduce((akk, item) => {
           akk.push(b.includes(item.color.id));
           return akk;
         }, []);
         return x.includes(true);
       }
-      let data = this.productsData
-        ? this.productsData.items.map(product => {
-            return {
-              ...product,
-              image: product.preview.file.url
-            };
-          })
+      const data = this.productsData
+        ? this.productsData.items.map(product => ({
+            ...product,
+            image: product.preview.file.url
+          }))
         : [];
       return this.filterColorId.length > 0
         ? data.filter(item => filterColors(item.colors, this.filterColorId))
@@ -104,7 +113,7 @@ export default {
       clearTimeout(this.loadProductsTimer);
       this.loadProductsTimer = setTimeout(() => {
         axios
-          .get(API_BASE_URL + "/api/products", {
+          .get(`${API_BASE_URL}/api/products`, {
             params: {
               page: this.page,
               limit: this.productsPerPage,

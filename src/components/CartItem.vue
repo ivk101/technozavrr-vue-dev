@@ -12,17 +12,30 @@
     <h3 class="product__title">
       {{ item.product.productOffer.title }}
     </h3>
-    <p class="product__info" style="{display:inline-flex}">
-      {{ item.product.productOffer.product.mainProp.title }}: &nbsp;
-      <span
-        style="display:inline-block"
-        class="colors__value"
-        :style="{ 'background-color': getColorCode(item.product.productOffer.propValues[0].value) }"
-        v-if="item.product.productOffer.product.mainProp.id == 7"
-      >
-      </span>
-      &nbsp; {{ item.product.productOffer.propValues[0].value }}
-    </p>
+    <div class="product__info">
+      <p class="product__info--prop">
+        {{ item.product.productOffer.product.mainProp.title }}: &nbsp;
+        <span
+          style="display:inline-block"
+          class="colors__value"
+          :style="{
+            'background-color': getColorCode(item.product.productOffer.propValues[0].value)
+          }"
+          v-if="item.product.productOffer.product.mainProp.id == 7"
+        >
+        </span>
+        &nbsp; {{ item.product.productOffer.propValues[0].value }}
+      </p>
+      <p v-if="item.product.productOffer.product.mainProp.id != 7" class="product__info--prop">
+        Цвет: &nbsp;
+        <span
+          style="display:inline-block"
+          class="colors__value"
+          :style="{ 'background-color': item.product.color.color.code }"
+        ></span>
+        &nbsp;{{ item.product.color.color.title }}
+      </p>
+    </div>
     <span class="product__code"> Артикул: {{ item.product.productOffer.id }} </span>
 
     <div class="product__counter form__counter">
@@ -59,9 +72,9 @@
 </template>
 
 <script>
+import { mapMutations, mapActions } from "vuex";
 import numberFormat from "@/helpers/numberFormat";
 import getColorCode from "@/helpers/getColorCode";
-import { mapMutations, mapActions } from "vuex";
 
 export default {
   props: ["item"],

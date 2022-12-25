@@ -78,7 +78,10 @@
         <div class="cart__block">
           <ul class="cart__orders">
             <li class="cart__order" v-for="item in cardOrderInfo">
-              <h3>{{ item.title }}</h3>
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p class="cart__order--color">Цвет: {{ item.color }}</p>
+              </div>
               <b>{{ (item.quantity * item.price) | numberFormat }} <span class="rub">i</span></b>
               <span>Артикул: {{ item.id || numberFormat }}</span>
             </li>
@@ -102,9 +105,9 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import numberFormat from "@/helpers/numberFormat";
-import endingCountProducts from "@/helpers/endingCountProducts";
+import { mapGetters } from 'vuex';
+import numberFormat from '@/helpers/numberFormat';
+import endingCountProducts from '@/helpers/endingCountProducts';
 
 export default {
   data() {
@@ -113,28 +116,29 @@ export default {
   filters: { numberFormat },
   computed: {
     ...mapGetters({
-      orderInfo: "orderInfo",
-      totalPriceInfo: "totalPriceInfo",
-      totalPositionInfo: "totalPositionInfo",
-      deliveryPrice: "getDeliveryPrice"
+      orderInfo: 'orderInfo',
+      totalPriceInfo: 'totalPriceInfo',
+      totalPositionInfo: 'totalPositionInfo',
+      deliveryPrice: 'getDeliveryPrice',
     }),
     cardOrderInfo() {
-      return this.orderInfo.basket.items.map(item => ({
+      return this.orderInfo.basket.items.map((item) => ({
         title: item.productOffer.title,
         price: item.productOffer.price,
         id: item.productOffer.id,
-        quantity: item.quantity
+        quantity: item.quantity,
+        color: item.color.color.title,
       }));
-    }
+    },
   },
   methods: {
-    endingCountProducts
+    endingCountProducts,
   },
   created() {
     if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
       return;
     }
-    this.$store.dispatch("loadOrderInfo", this.$route.params.id);
-  }
+    this.$store.dispatch('loadOrderInfo', this.$route.params.id);
+  },
 };
 </script>

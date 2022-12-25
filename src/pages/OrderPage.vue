@@ -28,7 +28,7 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST" @submit.prevent="order">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="validateForm">
         <div class="cart__field">
           <div class="cart__data">
             <BaseFormText
@@ -36,47 +36,42 @@
               :error="formError.name"
               title="ФИО"
               placeholder="Введите ваше полное имя"
+              :front="front.name"
             />
 
-            <label class="form__label">
-              <input
-                class="form__input"
-                v-model="formData.address"
-                type="text"
-                name="address"
-                placeholder="Введите ваш адрес"
-              />
-              <span class="form__value">Адрес доставки</span>
-              <span class="form__error" v-if="formError.address">{{ formError.address }}</span>
-            </label>
+            <BaseFormText
+              v-model="formData.address"
+              title="Адрес доставки"
+              :error="formError.address"
+              placeholder="Введите ваш адрес"
+              :front="front.address"
+            />
 
-            <label class="form__label">
-              <input
-                class="form__input"
-                v-model="formData.phone"
-                type="tel"
-                name="phone"
-                placeholder="Введите ваш телефон"
-              />
-              <span class="form__value">Телефон</span>
-              <span class="form__error" v-if="formError.phone">{{ formError.phone }}</span>
-            </label>
+            <BaseFormText
+              v-model="formData.phone"
+              title="Телефон"
+              :error="formError.phone"
+              placeholder="Введите ваш телефон"
+              :front="front.phone"
+            />
 
-            <label class="form__label">
-              <input
-                class="form__input"
-                v-model="formData.email"
-                type="email"
-                name="email"
-                placeholder="Введи ваш Email"
-              />
-              <span class="form__value">Email</span>
-              <span class="form__error" v-if="formError.email">{{ formError.email }}</span>
-            </label>
+            <BaseFormText
+              v-model="formData.email"
+              title="Email"
+              :error="formError.email"
+              placeholder="Введите ваш Email"
+              :front="front.email"
+            />
 
             <BaseFormTextarea
               title="Комментарий к заказу"
               v-model="formData.comment"
+              :error="formError.comment"
+              placeholder="Ваши пожелания"
+            />
+            <BaseFormTextArea
+              v-model="formData.comment"
+              title="Комментарий к заказу"
               :error="formError.comment"
               placeholder="Ваши пожелания"
             />
@@ -129,7 +124,10 @@
         <div class="cart__block">
           <ul class="cart__orders">
             <li class="cart__order" v-for="item in products">
-              <h3>{{ item.product.productOffer.title }}</h3>
+              <div>
+                <h3>{{ item.product.productOffer.title }}</h3>
+                <p class="cart__order--color">Цвет: {{ item.product.color.color.title }}</p>
+              </div>
               <b
                 >{{ (item.quantity * item.product.price) | numberFormat }}
                 <span class="rub">i</span></b
@@ -165,68 +163,115 @@
 </template>
 
 <script>
-import axios from "axios";
-import { API_BASE_URL } from "../config";
-import { mapGetters, mapMutations } from "vuex";
-import BaseFormText from "@/components/BaseFormText";
-import BaseFormTextarea from "@/components/BaseFormTextarea";
-import numberFormat from "@/helpers/numberFormat";
-import endingCountProducts from "@/helpers/endingCountProducts";
+import axios from 'axios';
+import { mapGetters, mapMutations } from 'vuex';
+import { API_BASE_URL } from '../config';
+import BaseFormText from '@/components/BaseFormText';
+import BaseFormTextarea from '@/components/BaseFormTextarea';
+import numberFormat from '@/helpers/numberFormat';
+import endingCountProducts from '@/helpers/endingCountProducts';
 
 export default {
   data() {
     return {
       formData: {
         deliveryTypeId: null,
-        paymentTypeId: null
+        paymentTypeId: null,
       },
       formError: {},
       formSending: false,
-      formErrorMessage: "",
+      formErrorMessage: '',
+      errors: [],
+      front: {
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+      },
       deliveriesData: [],
-      paymentsData: []
+      paymentsData: [],
     };
   },
   filters: { numberFormat },
   components: { BaseFormText, BaseFormTextarea },
   computed: {
     ...mapGetters({
-      products: "cartDetailProducts",
-      totalPrice: "cartTotalPrice",
-      totalPosition: "cartTotalPosition"
+      products: 'cartDetailProducts',
+      totalPrice: 'cartTotalPrice',
+      totalPosition: 'cartTotalPosition',
     }),
     deliveryPrice() {
       return this.formData.deliveryTypeId
-        ? +this.deliveriesData.find(item => item.id === this.formData.deliveryTypeId).price
+        ? +this.deliveriesData.find((item) => item.id === this.formData.deliveryTypeId).price
         : 0;
-    }
+    },
   },
   methods: {
-    ...mapMutations(["updateDeliveryPrice"]),
+    ...mapMutations(['updateDeliveryPrice']),
     endingCountProducts,
+    validEmail(email) {
+      const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return pattern.test(email);
+    },
+    validPhone(phone) {
+      const pattern = /^\+\d{11}$/;
+      return pattern.test(phone);
+    },
+    validateForm() {
+      this.errors = [];
+      this.front.name = '';
+      this.front.address = '';
+      this.front.phone = '';
+      this.front.email = '';
+      if (!this.formData.name) {
+        this.errors.push('Имя');
+        this.front.name = 'Введите свое имя пожалуйста';
+      }
+      if (!this.formData.address) {
+        this.errors.push('Адрес');
+        this.front.address = 'Введите адрес доставки пожалуйста';
+      }
+      if (!this.formData.phone) {
+        this.errors.push('Телефон');
+        this.front.phone = 'Вы забыли указать свой номер телефона';
+      } else if (!this.validPhone(this.formData.phone)) {
+        this.errors.push('Телефон');
+        this.front.phone = 'Укажите корректный номер телефона';
+      }
+      if (!this.formData.email) {
+        this.errors.push('Емейл');
+        this.front.email = 'Заполните поле Email пожалуйста';
+      } else if (!this.validEmail(this.formData.email)) {
+        this.errors.push('Емейл');
+        this.front.email = 'Укажите корректный адрес электронной почты';
+      }
+      if (!this.errors.length) {
+        this.order();
+      }
+    },
     order() {
       this.formError = {};
-      this.formErrorMessage = "";
+      this.formErrorMessage = '';
       this.formSending = true;
 
       axios
         .post(
-          API_BASE_URL + "/api/orders",
+          `${API_BASE_URL}/api/orders`,
           {
-            ...this.formData
+            ...this.formData,
           },
           {
             params: {
-              userAccessKey: this.$store.state.userAccessKey
-            }
-          }
+              userAccessKey: this.$store.state.userAccessKey,
+            },
+          },
         )
-        .then(response => {
-          this.$store.commit("resetCart");
-          this.$store.commit("updateOrderInfo", response.data);
-          this.$router.push({ name: "orderInfo", params: { id: response.data.id } });
+        .then((response) => {
+          this.$store.commit('resetCart');
+          this.$store.commit('updateOrderInfo', response.data);
+          this.$router.push({ name: 'orderInfo', params: { id: response.data.id } });
         })
-        .catch(error => {
+        .catch((error) => {
           this.formError = error.response.data.error.request || {};
           this.formErrorMessage = error.response.data.error.message;
         })
@@ -234,8 +279,8 @@ export default {
     },
     loadDeliveries() {
       axios
-        .get(API_BASE_URL + "/api/deliveries")
-        .then(response => (this.deliveriesData = response.data))
+        .get(`${API_BASE_URL}/api/deliveries`)
+        .then((response) => (this.deliveriesData = response.data))
         .then(() => {
           this.formData.deliveryTypeId = this.deliveriesData[0].id;
         })
@@ -245,32 +290,32 @@ export default {
     },
     loadPayments(value) {
       axios
-        .get(API_BASE_URL + "/api/payments", {
+        .get(`${API_BASE_URL}/api/payments`, {
           params: {
-            deliveryTypeId: value
-          }
+            deliveryTypeId: value,
+          },
         })
-        .then(response => (this.paymentsData = response.data))
+        .then((response) => (this.paymentsData = response.data))
         .then(() => {
           this.formData.paymentTypeId = this.paymentsData[0].id;
         });
-    }
+    },
   },
   created() {
     this.loadDeliveries();
   },
   watch: {
-    "formData.deliveryTypeId": function(val, oldVal) {
+    'formData.deliveryTypeId': function (val, oldVal) {
       if (oldVal === null) {
         return;
       }
       axios
-        .get(API_BASE_URL + "/api/payments", {
+        .get(`${API_BASE_URL}/api/payments`, {
           params: {
-            deliveryTypeId: this.formData.deliveryTypeId
-          }
+            deliveryTypeId: this.formData.deliveryTypeId,
+          },
         })
-        .then(response => {
+        .then((response) => {
           this.paymentsData = response.data;
         })
         .then(() => {
@@ -278,9 +323,9 @@ export default {
         });
     },
     deliveryPrice() {
-      this.$store.commit("updateDeliveryPrice", Number(this.deliveryPrice));
-    }
-  }
+      this.$store.commit('updateDeliveryPrice', Number(this.deliveryPrice));
+    },
+  },
 };
 </script>
 

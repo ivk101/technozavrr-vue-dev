@@ -137,12 +137,12 @@
   </main>
 </template>
 <script>
+import axios from "axios";
+import { mapActions } from "vuex";
 import gotoPage from "@/helpers/gotoPage";
 import numberFormat from "@/helpers/numberFormat";
 import getColorCode from "@/helpers/getColorCode";
-import axios from "axios";
 import { API_BASE_URL } from "../config";
-import { mapActions } from "vuex";
 import BaseTabs from "@/components/BaseTabs.vue";
 import BaseTab from "@/components/BaseTab.vue";
 import MainPropPicker from "@/components/MainPropPicker.vue";
@@ -207,7 +207,7 @@ export default {
       this.productLoadingFailed = false;
 
       axios
-        .get(API_BASE_URL + "/api/products/" + this.$route.params.id)
+        .get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
         .then(response => (this.productData = response.data))
         .then(() => {
           this.colorId = this.product.colors[0].color.id;

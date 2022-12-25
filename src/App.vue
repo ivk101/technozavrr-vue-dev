@@ -7,23 +7,23 @@
 </template>
 
 <script>
-import CartIndicator from "@/components/CartIndicator";
-import Header from "./components/Header.vue";
-import Footer from "@/components/Footer";
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations } from 'vuex';
+import CartIndicator from '@/components/CartIndicator';
+import Header from './components/Header.vue';
+import Footer from '@/components/Footer';
 
 export default {
   components: { CartIndicator, Header, Footer },
   created() {
-    const userAccessKey = localStorage.getItem("userAccessKey");
+    const userAccessKey = localStorage.getItem('userAccessKey');
     if (userAccessKey) {
       this.updateUserAccessKey(userAccessKey);
     }
     this.loadCart();
   },
   methods: {
-    ...mapActions(["loadCart"]),
-    ...mapMutations(["updateUserAccessKey"])
-  }
+    ...mapActions(['loadCart']),
+    ...mapMutations(['updateUserAccessKey']),
+  },
 };
 </script>

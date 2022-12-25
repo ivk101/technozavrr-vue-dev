@@ -284,6 +284,15 @@ a {
   align-items: flex-start;
 }
 
+.productsPerPage {
+  max-width: 290px;
+  padding: 0 25px;
+}
+.productsPerPage__legend {
+  color: #737373;
+  font-size: 15px;
+}
+
 .filter {
   background-color: #272727;
   color: #fff;
@@ -861,6 +870,11 @@ a {
   color: #9d9d9d;
 }
 
+.cart__order--color {
+  color: #9d9d9d;
+  font-size: 14px;
+}
+
 .cart__total p {
   margin: 0;
 }
@@ -912,8 +926,9 @@ a {
   line-height: 1;
   color: #737373;
 }
-.product__info {
-  display: flex;
+
+.product__info--prop {
+  display: inline-flex;
   align-items: center;
 }
 

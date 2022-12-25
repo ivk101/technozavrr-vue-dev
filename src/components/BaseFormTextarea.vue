@@ -7,8 +7,11 @@
 
 <script>
 import formFieldMixin from "@/mixins/formFieldMixin";
+import BaseFormField from "@/components/BaseFormField";
 
 export default {
+  props: ["title", "error", "placeholder"],
+  components: { BaseFormField },
   mixins: [formFieldMixin]
 };
 </script>

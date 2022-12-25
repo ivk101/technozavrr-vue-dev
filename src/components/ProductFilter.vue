@@ -25,12 +25,7 @@
         <label class="form__label form__label--select">
           <select class="form__select" type="text" name="category" v-model="currentCategoryId">
             <option value="0" checked="">Все категории</option>
-            <option
-              v-for="category in categories"
-              :key="category.id"
-              :value="category.id"
-              v-model="currentCategoryId"
-            >
+            <option v-for="category in categories" :key="category.id" :value="category.id">
               {{ category.title }}
             </option>
           </select>
@@ -102,8 +97,8 @@
   </aside>
 </template>
 <script>
-import axios from "axios";
-import { API_BASE_URL } from "../config";
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 export default {
   data() {
@@ -115,13 +110,14 @@ export default {
       currentPropId: [],
       currentPropName: null,
 
-      categoriesData: null,
-      categoryData: null,
+      categoriesData: [],
       colorsData: [],
-      propsData: []
+
+      categoryData: null,
+      propsData: [],
     };
   },
-  props: ["priceFrom", "priceTo", "categoryId", "propId", "propName", "colorId"],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'propId', 'propName', 'colorId'],
   computed: {
     categories() {
       return this.categoriesData ? this.categoriesData.items : [];
@@ -131,40 +127,40 @@ export default {
     },
     colors() {
       return this.colorsData ? this.colorsData.items : [];
-    }
+    },
   },
   methods: {
     submit() {
-      this.$emit("update:priceFrom", this.currentPriceFrom);
-      this.$emit("update:priceTo", this.currentPriceTo);
-      this.$emit("update:categoryId", this.currentCategoryId);
-      this.$emit("update:propId", this.currentPropId);
-      this.$emit("update:propName", this.currentPropName);
-      this.$emit("update:colorId", this.currentColorId);
+      this.$emit('update:priceFrom', this.currentPriceFrom);
+      this.$emit('update:priceTo', this.currentPriceTo);
+      this.$emit('update:categoryId', this.currentCategoryId);
+      this.$emit('update:propId', this.currentPropId);
+      this.$emit('update:propName', this.currentPropName);
+      this.$emit('update:colorId', this.currentColorId);
     },
     reset() {
-      this.$emit("update:priceFrom", null);
-      this.$emit("update:priceTo", null);
-      this.$emit("update:categoryId", 0);
-      this.$emit("update:propId", []);
-      this.$emit("update:colorId", []);
+      this.$emit('update:priceFrom', null);
+      this.$emit('update:priceTo', null);
+      this.$emit('update:categoryId', 0);
+      this.$emit('update:propId', []);
+      this.$emit('update:colorId', []);
       this.currentCategoryId = 0;
       this.currentPriceFrom = null;
       this.currentPriceTo = null;
 
-      this.$router.push({ name: "main" });
+      this.$router.push({ name: 'main' });
     },
     loadCategories() {
       axios
-        .get(API_BASE_URL + "/api/productCategories")
-        .then(response => (this.categoriesData = response.data));
+        .get(`${API_BASE_URL}/api/productCategories`)
+        .then((response) => (this.categoriesData = response.data));
     },
     loadColors() {
-      axios.get(API_BASE_URL + "/api/colors").then(response => (this.colorsData = response.data));
+      axios.get(`${API_BASE_URL}/api/colors`).then((response) => (this.colorsData = response.data));
     },
     querySubmitCategory() {
       this.currentCategoryId = this.categoryId;
-    }
+    },
   },
   watch: {
     priceFrom(value) {
@@ -182,28 +178,26 @@ export default {
     propId(value) {
       this.currentPropId = value;
     },
-    currentCategoryId: function() {
+    currentCategoryId() {
       this.categoryData = null;
       if (this.currentCategoryId > 0) {
         axios
-          .get(API_BASE_URL + "/api/productCategories/" + this.currentCategoryId)
-          .then(response => (this.categoryData = response.data))
+          .get(`${API_BASE_URL}/api/productCategories/${this.currentCategoryId}`)
+          .then((response) => (this.categoryData = response.data))
           .then(
-            () =>
-              (this.currentPropName =
-                this.categoryData.productProps.length > 0
-                  ? this.categoryData.productProps[0].code
-                  : null)
+            () => (this.currentPropName = this.categoryData.productProps.length > 0
+              ? this.categoryData.productProps[0].code
+              : null),
           )
           .then(() => (this.currentPropId = []))
           .then(() => (this.currentColorId = []));
       }
-    }
+    },
   },
   created() {
     this.loadCategories();
     this.loadColors();
     this.querySubmitCategory();
-  }
+  },
 };
 </script>
