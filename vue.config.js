@@ -1,3 +1,3 @@
 module.exports = {
-  // publicPath: "/technozavrr-vue/"
+  publicPath: "/technozavrr-vue/"
 };

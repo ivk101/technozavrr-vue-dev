@@ -151,6 +151,9 @@ export default {
     },
     filterPropId() {
       this.loadProducts();
+    },
+    productsPerPage() {
+      this.loadProducts();
     }
   }
 };
